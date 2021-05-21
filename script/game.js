@@ -62,6 +62,18 @@ const Board = (() => {
 })();
 
 const RenderController = (() => {
+    // menu elements
+    const game = document.querySelector('#game');
+    const menu = document.querySelector('#menu');
+    const humanPlayer = document.querySelector('#human');
+    const computer = document.querySelector('#computer');
+
+    // bind events
+    humanPlayer.addEventListener('click', () => {
+        menu.style.display = 'none';
+        game.style.display = 'flex'
+    });
+    computer.addEventListener('click', AIEnemy());
 	/* TODO:
      * Render the Grid Board
      * Get all the UI elements
