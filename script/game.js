@@ -9,10 +9,10 @@ const Player = (side, name) => {
     const getSide = () => _side;
     const getName = () => _name;
 
-    return { getScore, getSide, getName };
+    return { score: getScore, side: getSide, name: getName };
 };
 
-const gameBoard = (() => {
+const Board = (() => {
     let _board = ['', '', '',
         '', '', '',
         '', '', '',
@@ -22,27 +22,30 @@ const gameBoard = (() => {
     const _cell = document.querySelectorAll('#item');
 
     // render the board and assign the value using _board array
-    const _renderBoard = () => {
+    const renderBoard = () => {
         let index = 0; // board index
         _cell.forEach(elem => {
-            if (_board[index] == undefined) {
-                elem.innerText = '';
-            } else {
-                elem.innerText = _board[index];
-            }
+            elem.innerText = _board[index];
             index++;
         });
     };
 
+    // assign a mark in the board
     const assignMark = (e, player) => {
         const target = e.target;
-        if (player == 1) {
-            _board[target.dataset.cell - 1] = "X";
+        // check if the cell is not occupied
+        if (target.innerText == '') {
+            if (player == 1) {
+               _board[target.dataset.cell - 1] = "X";
+            } else {
+                _board[target.dataset.cell - 1] = "O";
+            }
         } else {
-            _board[target.dataset.cell - 1] = "O";
+            console.log('Already Marked');
         }
+        renderBoard();
         console.log(_board);
-        _renderBoard();
+        console.log(target.dataset.cell);
     };
 
     // bind event
@@ -50,12 +53,30 @@ const gameBoard = (() => {
         btn.addEventListener('click', (e) => assignMark(e, player = 1));
     });
 
-    _renderBoard();
-
+    console.log(_board);
     return {
-    	assignMark,
+    	assign: assignMark,
+    	render: renderBoard,
     };
 
+})();
+
+const RenderController = (() => {
+	/* TODO:
+     * Render the Grid Board
+     * Get all the UI elements
+     * Handle all the events
+     */
+})();
+
+const GameFlow = () => ({
+    /* TODO:
+     * Create the player (depends if p2 or ai are the enemy)
+     * Render the Grid Board
+     * Start the round 
+     * Check if the player has already won
+     * And if they want to play again or quit
+     */
 })();
 
 const Player1 = Player('X', "Player1");
