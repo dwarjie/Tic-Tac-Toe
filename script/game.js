@@ -1,24 +1,34 @@
 const GameStatus = (() => {
     let _gameStatus = true; // if true show menu
+    let _gameMode = "";
     let _isWon = false;
+    let _winner = "";
     let _currentTurn = 1; // Player1 first
     let _totalTurn = 0; // how many turns already been
 
     const getStatus = () => { return _gameStatus };
     const getIsWon = () => { return _playerWon };
     const getCurrentTurn = () => { return _currentTurn };
+    const getWinner = () => { return _winner };
+    const getMode = () => { return _gameMode };
 
     const setStatus = (status) => { _gameStatus = status };
     const setIsWon = (isWon) => { _playerWon = isWon };
     const setCurrentTurn = (currTurn) => { _currentTurn = currTurn };
+    const setWinner = (winner) => { _winner = winner }; 
+    const setGameMode = (mode) => { _gameMode = mode };
 
     return {
         getStatus,
         getIsWon,
         getCurrentTurn,
+        getWinner,
+        getMode,
         setStatus,
         setIsWon,
         setCurrentTurn,
+        setWinner,
+        setGameMode,
     };
 })();
 
@@ -112,8 +122,9 @@ const GameFlow = (() => {
             if (cell1 == " " || cell2 == " " || cell3 == " ")
                 continue;
             if (cell1 == cell2 && cell2 == cell3) {
-                console.log('Winner' + currentTurn);
+                gameStatus.setWinner(currentTurn);
                 gameStatus.setIsWon(true);
+                const render = RenderController;
             }
         };
     };
@@ -121,9 +132,9 @@ const GameFlow = (() => {
     const _switchTurn = () => {
         currentTurn = currentTurn === 1 ? 2 : 1; // switch the side
         if (currentTurn === 1) {
-            console.log('Player1 Turn');
+            console.log(player1.getName());
         } else {
-            console.log('Player2 Turn');
+            console.log(player2.getName());
         };
     };
 
@@ -137,7 +148,6 @@ const GameFlow = (() => {
             } else {
                 gameBoard[target.dataset.cell - 1] = "O";
             }
-
             board.renderBoard();
             _checkWinner();
             _switchTurn();
@@ -148,7 +158,7 @@ const GameFlow = (() => {
     };
 
     const _createEnemy = (mode) => {
-        if (mode === "Human") {
+        if (gameStatus.getMode() === "Human") {
             player2 = Player(2, "Player2");
             console.log(player2);
             // create player 2
@@ -177,8 +187,6 @@ const GameFlow = (() => {
 })();
 
 const RenderController = (() => {
-    let _gameMode = "";
-
     const _board = Board;
     const _gameFlow = GameFlow;
     const _gameStatus = GameStatus;
@@ -207,16 +215,24 @@ const RenderController = (() => {
         _toggleMenu();
         const target = e.target;
         if (target.dataset.mode == "1") {
-            _gameMode = "Human";
+            _gameStatus.setGameMode("Human");
         } else {
-            _gameMode = "Computer";
+            _gameStatus.setGameMode("Computer");
         }
-        _gameFlow.makeEnemy(_gameMode);
+        _gameFlow.makeEnemy();
+    };
+
+    const winnerScreen = () => {
+        console.log('WINNER SCREEN');
     };
 
     // bind events
     _humanPlayer.addEventListener('click', (e) => _chooseEnemy(e, 'player'));
     _computer.addEventListener('click', (e) => _chooseEnemy(e, 'computer'));
+    
+    return {
+        winnerScreen,
+    };
     /* TODO:
      * Render the Grid Board /
      * Get all the UI elements /
