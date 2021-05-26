@@ -125,6 +125,7 @@ const GameFlow = (() => {
                 gameStatus.setWinner(currentTurn);
                 gameStatus.setIsWon(true);
                 const render = RenderController;
+                render.winnerScreen();
             }
         };
     };
@@ -132,9 +133,9 @@ const GameFlow = (() => {
     const _switchTurn = () => {
         currentTurn = currentTurn === 1 ? 2 : 1; // switch the side
         if (currentTurn === 1) {
-            console.log(player1.getName());
+            console.log(player1.name());
         } else {
-            console.log(player2.getName());
+            console.log(player2.name());
         };
     };
 
@@ -196,6 +197,7 @@ const RenderController = (() => {
     const _menu = document.querySelector('#menu');
     const _humanPlayer = document.querySelector('#human');
     const _computer = document.querySelector('#computer');
+    const _winnerModal = document.querySelector('#winnerModal');
 
     const _toggleMenu = () => {
         // if status = true toggle to show menu
@@ -223,7 +225,8 @@ const RenderController = (() => {
     };
 
     const winnerScreen = () => {
-        console.log('WINNER SCREEN');
+        // show modal
+        _winnerModal.style.display = 'block';
     };
 
     // bind events
