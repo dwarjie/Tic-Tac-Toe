@@ -1,34 +1,55 @@
+const CONSTANTS = (() => {
+    const HUMANMODE = "Human"; // player vs player
+    const COMPUTERMODE = "Computer" // player vs computer (AI)
+    const DEFAULTBOARD = [
+        " ", " ", " ",
+        " ", " ", " ",
+        " ", " ", " ",
+    ];
+
+    return {
+        HUMANMODE,
+        COMPUTERMODE,
+        DEFAULTBOARD,
+    }
+
+})();
+
 const GameStatus = (() => {
     let _gameStatus = true; // if true show menu
     let _gameMode = "";
+    let _roundNumber = 1;
     let _isWon = false;
-    let _winner = "";
     let _currentTurn = 1; // Player1 first
     let _totalTurn = 0; // how many turns already been
 
     const getStatus = () => { return _gameStatus };
-    const getIsWon = () => { return _playerWon };
+    const getIsWon = () => { return _isWon };
     const getCurrentTurn = () => { return _currentTurn };
-    const getWinner = () => { return _winner };
     const getMode = () => { return _gameMode };
+    const getTotalTurn = () => { return _totalTurn };
+    const getTotalRound = () => { return _roundNumber };
 
     const setStatus = (status) => { _gameStatus = status };
-    const setIsWon = (isWon) => { _playerWon = isWon };
+    const setIsWon = (isWon) => { _isWon = isWon };
     const setCurrentTurn = (currTurn) => { _currentTurn = currTurn };
-    const setWinner = (winner) => { _winner = winner }; 
     const setGameMode = (mode) => { _gameMode = mode };
+    const setTotalTurn = (amount) => { _totalTurn = amount };
+    const setRound = (round) => { _roundNumber = round };
 
     return {
         getStatus,
         getIsWon,
         getCurrentTurn,
-        getWinner,
         getMode,
+        getTotalTurn,
+        getTotalRound,
         setStatus,
         setIsWon,
         setCurrentTurn,
-        setWinner,
         setGameMode,
+        setTotalTurn,
+        setRound,
     };
 })();
 
@@ -37,16 +58,19 @@ const Player = (side, name) => {
     let _side = side;
     let _name = name;
 
-    const _addScore = () => _score++;
+    const addScore = () => _score++;
+    const resetScore = () => _score = 0;
 
     const getScore = () => _score;
     const getSide = () => _side;
     const getName = () => _name;
 
-    return { score: getScore, side: getSide, name: getName };
+    return { score: getScore, side: getSide, name: getName, resetScore, addScore, };
 };
 
 const Board = (() => {
+    const constants = CONSTANTS;
+
     let _board = [
         " ", " ", " ",
         " ", " ", " ",
@@ -58,7 +82,13 @@ const Board = (() => {
 
     const getBoard = () => {
         // get the value of board
-        return _board;        
+        return _board;
+    };
+
+    const resetBoard = (confirm) => {
+        // confirm if really want to reset
+        if (confirm)
+            _board.splice(0, _board.length, ...constants.DEFAULTBOARD);
     };
 
     // render the board and assign the value using _board array
@@ -74,12 +104,13 @@ const Board = (() => {
     return {
         getBoard,
         renderBoard,
+        resetBoard,
     };
 
 })();
 
 const GameFlow = (() => {
-    
+
     const horizontalPattern = [
         [1, 2, 3],
         [4, 5, 6],
@@ -102,10 +133,31 @@ const GameFlow = (() => {
 
     const gameStatus = GameStatus;
     let currentTurn = gameStatus.getCurrentTurn();
-
+    const constants = CONSTANTS;
     const player1 = Player(1, "Player1"); // main player
 
+    const _checkPlayerName = (turn) => {
+        if (gameStatus.getMode() === constants.HUMANMODE) {
+            switch (turn) {
+                case 1:
+                    player1.addScore(); // add 1
+                    return player1.name();
+                    break;
+                case 2:
+                    player2.addScore();
+                    return player2.name();
+                default:
+                    console.log("Can't Identify Player")
+                    break;
+            }
+        } else {
+            // computer
+        }
+    };
+
     const _checkWinner = () => {
+        // the total game turns is 9
+        // after 9 turn still no winner its draw
         let winPattern = [...horizontalPattern, ...verticalPattern, ...diagonalPattern];
         const side = currentTurn == 1 ? "X" : "O"
 
@@ -115,19 +167,24 @@ const GameFlow = (() => {
             let cell1 = gameBoard[winPattern[i][0] - 1];
             let cell2 = gameBoard[winPattern[i][1] - 1];
             let cell3 = gameBoard[winPattern[i][2] - 1];
-            // console.log(cell1, cell2, cell3);
 
             // check if all 3 cell has the same value
             // if true - current Turn wins else continue iteration
             if (cell1 == " " || cell2 == " " || cell3 == " ")
                 continue;
             if (cell1 == cell2 && cell2 == cell3) {
-                gameStatus.setWinner(currentTurn);
+                // gameStatus.setWinner(currentTurn);
                 gameStatus.setIsWon(true);
                 const render = RenderController;
-                render.winnerScreen();
+                render.winnerScreen(`Winner: ${_checkPlayerName(currentTurn)}`, true);
             }
         };
+
+        if (gameStatus.getTotalTurn() >= 9 && gameStatus.getIsWon() == false) {
+            // it's a draw
+            const render = RenderController;
+            render.winnerScreen(`It's a draw!`, true);
+        }
     };
 
     const _switchTurn = () => {
@@ -140,7 +197,7 @@ const GameFlow = (() => {
     };
 
     // assign a mark in the board
-    const assignMark = (e) => {
+    const _assignMark = (e) => {
         const target = e.target;
         // check if the cell is not occupied
         if (target.innerText == '') {
@@ -149,6 +206,8 @@ const GameFlow = (() => {
             } else {
                 gameBoard[target.dataset.cell - 1] = "O";
             }
+            gameStatus.setTotalTurn(gameStatus.getTotalTurn() + 1); // count the number of turn in game
+            console.log(gameBoard);
             board.renderBoard();
             _checkWinner();
             _switchTurn();
@@ -158,8 +217,8 @@ const GameFlow = (() => {
         }
     };
 
-    const _createEnemy = (mode) => {
-        if (gameStatus.getMode() === "Human") {
+    const createEnemy = (mode) => {
+        if (gameStatus.getMode() === constants.HUMANMODE) {
             player2 = Player(2, "Player2");
             console.log(player2);
             // create player 2
@@ -168,15 +227,34 @@ const GameFlow = (() => {
         };
     };
 
+    // setting up for the next round
+    const _resetRound = () => {
+        // reset for the next round
+        board.resetBoard(true);
+        board.renderBoard();
+        gameStatus.setTotalTurn(0);
+        gameStatus.setIsWon(false);
+        gameStatus.setCurrentTurn(1);
+    };
+
+    const playNextRound = () => {
+        _resetRound();
+        gameStatus.setRound(gameStatus.getTotalRound() + 1);
+        console.log(`Round: ${gameStatus.getTotalRound()}`);
+        const render = RenderController;
+        render.winnerScreen(false); // close modal
+    };
+
     // board elements
     const _cell = document.querySelectorAll('#item');
     // board cells
     _cell.forEach(btn => {
-        btn.addEventListener('click', (e) => assignMark(e));
+        btn.addEventListener('click', (e) => _assignMark(e));
     });
 
     return {
-        makeEnemy: _createEnemy,
+        makeEnemy: createEnemy,
+        nextRound: playNextRound,
     };
     /* TODO:
      * Create the player (depends if p2 or ai are the enemy) /
@@ -191,6 +269,7 @@ const RenderController = (() => {
     const _board = Board;
     const _gameFlow = GameFlow;
     const _gameStatus = GameStatus;
+    const constants = CONSTANTS;
 
     // menu elements
     const _game = document.querySelector('#game');
@@ -198,6 +277,9 @@ const RenderController = (() => {
     const _humanPlayer = document.querySelector('#human');
     const _computer = document.querySelector('#computer');
     const _winnerModal = document.querySelector('#winnerModal');
+    const _winnerName = document.querySelector('#winnerName');
+    const _playAgainBtn = document.querySelector('#playMore');
+    const _quitBtn = document.querySelector('#quit');
 
     const _toggleMenu = () => {
         // if status = true toggle to show menu
@@ -217,22 +299,31 @@ const RenderController = (() => {
         _toggleMenu();
         const target = e.target;
         if (target.dataset.mode == "1") {
-            _gameStatus.setGameMode("Human");
+            _gameStatus.setGameMode(constants.HUMANMODE);
         } else {
-            _gameStatus.setGameMode("Computer");
+            _gameStatus.setGameMode(constants.COMPUTERMODE);
         }
         _gameFlow.makeEnemy();
     };
 
-    const winnerScreen = () => {
-        // show modal
-        _winnerModal.style.display = 'block';
+    const winnerScreen = (winnerText = "", showModal) => {
+        if (showModal == true) {
+            // show modal
+            _winnerName.innerText = winnerText;
+            _winnerModal.style.display = 'block';
+        } else {
+            // remove modal
+            _winnerName.innerText = '';
+            _winnerModal.style.display = 'none';
+        }
     };
 
     // bind events
     _humanPlayer.addEventListener('click', (e) => _chooseEnemy(e, 'player'));
     _computer.addEventListener('click', (e) => _chooseEnemy(e, 'computer'));
-    
+    _playAgainBtn.addEventListener('click', () => _gameFlow.nextRound());
+    // _quitBtn.addEventListener('click', #GotoMainMenu);
+
     return {
         winnerScreen,
     };
