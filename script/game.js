@@ -188,6 +188,7 @@ const GameFlow = (() => {
     };
 
     const _switchTurn = () => {
+        console.log('Before switch: ' + currentTurn);
         currentTurn = currentTurn === 1 ? 2 : 1; // switch the side
         if (currentTurn === 1) {
             console.log(player1.name());
@@ -207,7 +208,7 @@ const GameFlow = (() => {
                 gameBoard[target.dataset.cell - 1] = "O";
             }
             gameStatus.setTotalTurn(gameStatus.getTotalTurn() + 1); // count the number of turn in game
-            console.log(gameBoard);
+
             board.renderBoard();
             _checkWinner();
             _switchTurn();
@@ -217,32 +218,38 @@ const GameFlow = (() => {
         }
     };
 
+    const gameUI = () => {
+        // Give the ui all information needs
+        // update them in every round
+        const render = RenderController;
+        render.playInfo(gameStatus.getTotalRound(), player1.score(), player2.score(), player1.name(), player2.name());
+    };
+
     const createEnemy = (mode) => {
         if (gameStatus.getMode() === constants.HUMANMODE) {
             player2 = Player(2, "Player2");
-            console.log(player2);
-            // create player 2
         } else {
             // create AI
         };
+        gameUI()
     };
 
     // setting up for the next round
     const _resetRound = () => {
-        // reset for the next round
         board.resetBoard(true);
         board.renderBoard();
         gameStatus.setTotalTurn(0);
         gameStatus.setIsWon(false);
-        gameStatus.setCurrentTurn(1);
     };
 
     const playNextRound = () => {
         _resetRound();
         gameStatus.setRound(gameStatus.getTotalRound() + 1);
         console.log(`Round: ${gameStatus.getTotalRound()}`);
+        _switchTurn();
         const render = RenderController;
         render.winnerScreen(false); // close modal
+        gameUI();
     };
 
     // board elements
@@ -280,6 +287,9 @@ const RenderController = (() => {
     const _winnerName = document.querySelector('#winnerName');
     const _playAgainBtn = document.querySelector('#playMore');
     const _quitBtn = document.querySelector('#quit');
+    const _round = document.querySelector('#round');
+    const _player1Score = document.querySelector('#player1-score');
+    const _enemyScore = document.querySelector('#enemy-score');
 
     const _toggleMenu = () => {
         // if status = true toggle to show menu
@@ -318,6 +328,13 @@ const RenderController = (() => {
         }
     };
 
+    const playInfo = (round = 0, pScore = 0, eScore = 0, pName, eName) => {
+        // game UI info
+        _round.innerText = `Round: ${round}`;
+        _player1Score.innerText = `${pName}: ${pScore}`;
+        _enemyScore.innerText = `${eName}: ${eScore}`;
+    };
+
     // bind events
     _humanPlayer.addEventListener('click', (e) => _chooseEnemy(e, 'player'));
     _computer.addEventListener('click', (e) => _chooseEnemy(e, 'computer'));
@@ -326,6 +343,7 @@ const RenderController = (() => {
 
     return {
         winnerScreen,
+        playInfo,
     };
     /* TODO:
      * Render the Grid Board /

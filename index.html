@@ -1,48 +1,55 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link rel="stylesheet" type="text/css" href="style/app.css">
-	<link rel="preconnect" href="https://fonts.gstatic.com">
-	<link href="https://fonts.googleapis.com/css2?family=KoHo:wght@400;700&display=swap" rel="stylesheet">
-	<title>Tic Tac Toe</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="style/app.css">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=KoHo:wght@400;700&display=swap" rel="stylesheet">
+    <title>Tic Tac Toe</title>
 </head>
+
 <body>
-	<div class="container">
-		<div id="menu">
-			<h1>Tic Tac Toe</h1>
-			<h3>This game is made for Odin Project using HTML, CSS and JavaScript.</h3>
-			<div data-mode="1" id="human">
-				<p>Player vs Player</p>
-			</div>
-			<div data-mode="2" id="computer">
-				<p>Player vs Computer</p>
-			</div>
-		</div>
-		<div id="game">
-			<div id="game-info"></div>
-			<div id="player-info"></div>
-			<div id="game-board" class="grid">
-				<button data-cell="1" id="item"></button>
-				<button data-cell="2" id="item"></button>
-				<button data-cell="3" id="item"></button>
-				<button data-cell="4" id="item"></button>
-				<button data-cell="5" id="item"></button>
-				<button data-cell="6" id="item"></button>
-				<button data-cell="7" id="item"></button>
-				<button data-cell="8" id="item"></button>
-				<button data-cell="9" id="item"></button>
-			</div>
-		</div>
-		<div id="winnerModal">
-			<div class="modal-container">
-				<h1 id="winnerName"></h1>
-				<button id="playMore">Play again</button>
-				<button id="quit">Menu</button>
-			</div>
-		</div>
-	</div>
-	<script src="script/game.js"></script>
+    <div class="container">
+        <div id="menu">
+            <h1>Tic Tac Toe</h1>
+            <h3>This game is made for Odin Project using HTML, CSS and JavaScript.</h3>
+            <div data-mode="1" id="human">
+                <p>Player vs Player</p>
+            </div>
+            <div data-mode="2" id="computer">
+                <p>Player vs Computer</p>
+            </div>
+        </div>
+        <div id="game">
+            <div id="game-info">
+                <h2 id="player1-score"></h2>
+                <h2 id="round">Round: </h2>
+                <h2 id="enemy-score"></h2>
+            </div>
+            <div id="player-info"></div>
+            <div id="game-board" class="grid">
+                <button data-cell="1" id="item"></button>
+                <button data-cell="2" id="item"></button>
+                <button data-cell="3" id="item"></button>
+                <button data-cell="4" id="item"></button>
+                <button data-cell="5" id="item"></button>
+                <button data-cell="6" id="item"></button>
+                <button data-cell="7" id="item"></button>
+                <button data-cell="8" id="item"></button>
+                <button data-cell="9" id="item"></button>
+            </div>
+        </div>
+        <div id="winnerModal">
+            <div class="modal-container">
+                <h1 id="winnerName"></h1>
+                <button id="playMore">Play again</button>
+                <button id="quit">Menu</button>
+            </div>
+        </div>
+    </div>
+    <script src="script/game.js"></script>
 </body>
+
 </html>
