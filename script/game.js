@@ -126,7 +126,9 @@ const GameFlow = (() => {
         [3, 5, 7]
     ];
 
+    // later to be put value
     let player2;
+    let player1;
 
     const board = Board;
     const gameBoard = board.getBoard();
@@ -134,7 +136,6 @@ const GameFlow = (() => {
     const gameStatus = GameStatus;
     let currentTurn = gameStatus.getCurrentTurn();
     const constants = CONSTANTS;
-    const player1 = Player(1, "Player1"); // main player
 
     const _checkPlayerName = (turn) => {
         if (gameStatus.getMode() === constants.HUMANMODE) {
@@ -226,6 +227,7 @@ const GameFlow = (() => {
     };
 
     const createEnemy = (mode) => {
+        player1 = Player(1, "Player1"); // main player
         if (gameStatus.getMode() === constants.HUMANMODE) {
             player2 = Player(2, "Player2");
         } else {
@@ -252,6 +254,16 @@ const GameFlow = (() => {
         gameUI();
     };
 
+    const quitGame = () => {
+        // reset everything
+        _resetRound();
+        gameStatus.setRound(1);
+        gameStatus.setGameMode("");
+        gameStatus.setStatus(true);
+        player1.resetScore();
+        player2.resetScore();
+    };
+
     // board elements
     const _cell = document.querySelectorAll('#item');
     // board cells
@@ -262,6 +274,7 @@ const GameFlow = (() => {
     return {
         makeEnemy: createEnemy,
         nextRound: playNextRound,
+        quitGame,
     };
     /* TODO:
      * Create the player (depends if p2 or ai are the enemy) /
@@ -275,7 +288,7 @@ const GameFlow = (() => {
 const RenderController = (() => {
     const _board = Board;
     const _gameFlow = GameFlow;
-    const _gameStatus = GameStatus;
+    const gameStatus = GameStatus;
     const constants = CONSTANTS;
 
     // menu elements
@@ -293,7 +306,7 @@ const RenderController = (() => {
 
     const _toggleMenu = () => {
         // if status = true toggle to show menu
-        if (_gameStatus.getStatus()) {
+        if (gameStatus.getStatus()) {
             // show menu
             _menu.style.display = 'flex';
             _game.style.display = 'none';
@@ -305,13 +318,13 @@ const RenderController = (() => {
     };
 
     const _chooseEnemy = (e, choice) => {
-        _gameStatus.setStatus(false);
+        gameStatus.setStatus(false);
         _toggleMenu();
         const target = e.target;
         if (target.dataset.mode == "1") {
-            _gameStatus.setGameMode(constants.HUMANMODE);
+            gameStatus.setGameMode(constants.HUMANMODE);
         } else {
-            _gameStatus.setGameMode(constants.COMPUTERMODE);
+            gameStatus.setGameMode(constants.COMPUTERMODE);
         }
         _gameFlow.makeEnemy();
     };
@@ -339,7 +352,11 @@ const RenderController = (() => {
     _humanPlayer.addEventListener('click', (e) => _chooseEnemy(e, 'player'));
     _computer.addEventListener('click', (e) => _chooseEnemy(e, 'computer'));
     _playAgainBtn.addEventListener('click', () => _gameFlow.nextRound());
-    // _quitBtn.addEventListener('click', #GotoMainMenu);
+    _quitBtn.addEventListener('click', () => {
+        _gameFlow.quitGame();
+        winnerScreen(false);
+        _toggleMenu();
+    });
 
     return {
         winnerScreen,
