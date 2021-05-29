@@ -4,7 +4,7 @@
 
 * {
     box-sizing: border-box;
-    font-family: 'KoHo', sans-serif;
+    font-family: 'Balsamiq Sans', cursive, sans-serif;
     margin: 0;
     padding: 0;
 }
@@ -12,6 +12,11 @@
 .container {
     max-width: 90%;
     margin: 3rem auto;
+}
+
+i {
+    font-size: 5rem;
+    margin: 0 15%;
 }
 
 h1 {
@@ -29,7 +34,7 @@ h3 {
 
 p {
     font-size: 2rem;
-    font-weight: 600;
+    font-weight: 700;
 }
 
 #menu {
@@ -52,6 +57,10 @@ p {
     border: .2rem solid #5e4e4e;
     border-radius: 1rem;
     cursor: pointer;
+}
+
+#menu div > * {
+    display: inline-block;
 }
 
 /* GAME STYLE*/
@@ -84,11 +93,18 @@ p {
 
 #game-board {
     max-width: 50%;
+    max-height: 50%;
 }
 
 #item {
+    display: inline-block;
+    font-size: 3rem;
+    text-overflow: ellipsis;
+    overflow: hidden;
     cursor: pointer;
-    padding: 5rem;
+    /*padding: 5rem;*/
+    width: 10rem;
+    height: 10rem;
     align-self: center;
 }
 
@@ -118,7 +134,7 @@ p {
 }
 
 .modal-container h1 {
-    font-size: 4rem;
+    font-size: 3rem;
     margin-bottom: 1rem;
 }
 
