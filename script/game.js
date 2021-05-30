@@ -134,7 +134,7 @@ const GameFlow = (() => {
     const gameBoard = board.getBoard();
 
     const gameStatus = GameStatus;
-    let currentTurn = gameStatus.getCurrentTurn();
+    let currentTurn;
     const constants = CONSTANTS;
 
     const _checkPlayerName = (turn) => {
@@ -160,7 +160,7 @@ const GameFlow = (() => {
         // the total game turns is 9
         // after 9 turn still no winner its draw
         let winPattern = [...horizontalPattern, ...verticalPattern, ...diagonalPattern];
-        const side = currentTurn == 1 ? "X" : "O"
+        const side = gameStatus.getCurrentTurn() == 1 ? "X" : "O"
 
         // iterate into the array and
         // and check if the pattern has the same 3 value
@@ -177,7 +177,7 @@ const GameFlow = (() => {
                 // gameStatus.setWinner(currentTurn);
                 gameStatus.setIsWon(true);
                 const render = RenderController;
-                render.winnerScreen(`Winner: ${_checkPlayerName(currentTurn)}`, true);
+                render.winnerScreen(`Winner: ${_checkPlayerName(gameStatus.getCurrentTurn())}`, true);
             }
         };
 
@@ -189,13 +189,15 @@ const GameFlow = (() => {
     };
 
     const _switchTurn = () => {
-        console.log('Before switch: ' + currentTurn);
-        currentTurn = currentTurn === 1 ? 2 : 1; // switch the side
+        console.log('Before switch: ' + gameStatus.getCurrentTurn());
+        currentTurn = gameStatus.getCurrentTurn() === 1 ? gameStatus.setCurrentTurn(2) : gameStatus.setCurrentTurn(1); // switch the side
         if (currentTurn === 1) {
             console.log(player1.name());
         } else {
             console.log(player2.name());
         };
+        const render = RenderController;
+        render.profileInfo();
     };
 
     // assign a mark in the board
@@ -203,7 +205,7 @@ const GameFlow = (() => {
         const target = e.target;
         // check if the cell is not occupied
         if (target.innerText == '') {
-            if (currentTurn == 1) {
+            if (gameStatus.getCurrentTurn() == 1) {
                 gameBoard[target.dataset.cell - 1] = "X";
             } else {
                 gameBoard[target.dataset.cell - 1] = "O";
@@ -223,6 +225,7 @@ const GameFlow = (() => {
         // Give the ui all information needs
         // update them in every round
         const render = RenderController;
+        render.profileInfo();
         render.playInfo(gameStatus.getTotalRound(), player1.score(), player2.score(), player1.name(), player2.name());
     };
 
@@ -281,7 +284,7 @@ const GameFlow = (() => {
      * Render the Grid Board /
      * Start the round /
      * Check if the player has already won /
-     * And if they want to play again or quit
+     * And if they want to play again or quit /
      */
 })();
 
@@ -303,6 +306,8 @@ const RenderController = (() => {
     const _round = document.querySelector('#round');
     const _player1Score = document.querySelector('#player1-score');
     const _enemyScore = document.querySelector('#enemy-score');
+    const _playerProfile = document.querySelector('#player-profile');
+    const _enemyProfile = document.querySelector('#enemy-profile');
 
     const _toggleMenu = () => {
         // if status = true toggle to show menu
@@ -348,6 +353,23 @@ const RenderController = (() => {
         _enemyScore.innerText = `${eName}: ${eScore}`;
     };
 
+    const profileInfo = () => {
+        // update the ui on who's turn it is
+        switch (gameStatus.getCurrentTurn()) {
+            case 1:
+                // main player
+                _enemyProfile.classList.remove('current-turn');
+                _playerProfile.classList.add('current-turn');
+                break;
+            case 2:
+                _playerProfile.classList.remove('current-turn');
+                _enemyProfile.classList.add('current-turn');
+            default:
+                console.log('Error profile')
+                break;
+        }
+    }
+
     // bind events
     _humanPlayer.addEventListener('click', (e) => _chooseEnemy(e, 'player'));
     _computer.addEventListener('click', (e) => _chooseEnemy(e, 'computer'));
@@ -361,6 +383,7 @@ const RenderController = (() => {
     return {
         winnerScreen,
         playInfo,
+        profileInfo,
     };
     /* TODO:
      * Render the Grid Board /

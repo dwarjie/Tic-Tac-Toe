@@ -5,8 +5,13 @@
 * {
     box-sizing: border-box;
     font-family: 'Balsamiq Sans', cursive, sans-serif;
+    color: #264653;
     margin: 0;
     padding: 0;
+}
+
+html {
+    background-color: #a8dadc;
 }
 
 .container {
@@ -15,8 +20,15 @@
 }
 
 i {
+    background-color: none;
+    color:  white;
+    padding: 1.5rem;
     font-size: 5rem;
-    margin: 0 15%;
+    margin: 0 5%;
+}
+
+.fa-robot {
+    font-size: 4.5rem;
 }
 
 h1 {
@@ -32,7 +44,8 @@ h3 {
     font-weight: 400;
 }
 
-p {
+p {    
+    background-color: none;
     font-size: 2rem;
     font-weight: 700;
 }
@@ -51,16 +64,24 @@ p {
 
 #menu div {
     width: 50%;
-    padding: 5rem;
+    padding: 4rem 5rem;
     margin-top: 3rem;
-    background-color: #f7f7f7;
-    border: .2rem solid #5e4e4e;
-    border-radius: 1rem;
+    background-color: #1d3557;
+    border: none;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    border-radius: .5rem;
     cursor: pointer;
+}
+
+#menu div:hover {
+    animation-duration: .8s;
+    animation-name: btnHover;
+    animation-iteration-count: infinite;
 }
 
 #menu div > * {
     display: inline-block;
+    color: white;
 }
 
 /* GAME STYLE*/
@@ -69,6 +90,7 @@ p {
     display: none;
     width: 90%;
     margin: 0 auto;
+    padding: 0 3rem;
     flex-direction: column;
     justify-content: center;
     align-items: center;
@@ -82,11 +104,37 @@ p {
     margin: 3rem 0;
 }
 
+.game-ui {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 5rem;
+}
+
+/*#player-info i {
+    background-color: #457b9d;
+    margin-bottom: 2rem;
+    padding: 2rem 2.5rem;
+}*/
+
+#player-info div {
+    text-align: center;
+    background-color: #457b9d;
+    margin-bottom: 2rem;
+    padding: 1rem 1.5rem;
+    transition: transform .8s ease-in-out;  
+}
+
+.current-turn {
+    transform: scale(1.1);
+    border: 2px solid #f1faee;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
 .grid {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
     grid-template-rows: 1fr 1fr 1fr;
-    gap: 1rem;
+    gap: .5rem;
     justify-items: center;
     align-items: center;
 }
@@ -97,8 +145,9 @@ p {
 }
 
 #item {
+    background-color: #f1faee;
     display: inline-block;
-    font-size: 3rem;
+    font-size: 3.5rem;
     text-overflow: ellipsis;
     overflow: hidden;
     cursor: pointer;
@@ -106,6 +155,13 @@ p {
     width: 10rem;
     height: 10rem;
     align-self: center;
+    border: none;
+}
+
+#item:hover {
+    animation-duration: 1s;
+    animation-name: cellHover;
+    animation-iteration-count: infinite;
 }
 
 /* WINNER MODAL */
@@ -143,4 +199,48 @@ p {
     padding: .5rem;
     margin-bottom: 1rem;
     cursor: pointer;
+}
+
+.modal-container button:hover {
+    animation-duration: .8s;
+    animation-name: btnHover;
+    animation-iteration-count: infinite;
+}
+
+/* ANIMATIONS */
+
+@keyframes btnHover {
+    0% {
+        width: 50%;
+    }
+
+    50% {
+        width: 55%;
+    }
+
+    100% {
+        width: 50%;
+    }
+}
+
+@keyframes cellHover {
+    0% {
+        opacity: 1;
+        border: 2px solid rgba(69,123,157, 1);
+    }
+
+    25% {
+        opacity: .5;
+        border: 2px solid rgba(69,123,157, 1);
+    }
+
+    75% {
+        opacity: .8;
+        border: 2px solid rgba(69,123,157, 1);
+    }
+
+    100% {
+        opacity: 1;
+        border: 2px solid rgba(69,123,157, 1);
+    }
 }
